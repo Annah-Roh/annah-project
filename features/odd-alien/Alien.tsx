@@ -20,13 +20,24 @@ const PUPIL_AMPLIFY = 1.6;
  * round.ts의 편차 비율만으로는 종·요소 조합마다 최악의 경우를 다 계산해야 해서, 렌더링 단계에서
  * 절대값으로 한 번 더 못박는다.
  */
-const MIN_DETAIL_DELTA = 3.5;
+const MIN_DETAIL_DELTA = 6;
+/** 크기가 이 밑으로는 내려가지 않게 한다(음수·0 크기의 도형이 그려지는 것을 막는 안전장치). */
+const MIN_RENDER_SIZE = 1;
 
-/** actual이 baseline과 다르면(=이 요소가 이번 라운드의 차이점이면) 최소 MIN_DETAIL_DELTA만큼은 벌어지게 한다. */
+/**
+ * actual이 baseline과 다르면(=이 요소가 이번 라운드의 차이점이면) 최소 MIN_DETAIL_DELTA만큼은
+ * 벌어지게 한다. baseline이 작아서(예: 작은 종의 동공) 줄어드는 방향으로는 그만큼 못 줄어들면,
+ * 대신 늘어나는 방향으로 뒤집어서라도 최소 차이를 채운다.
+ */
 function withMinDelta(baseline: number, actual: number): number {
   const diff = actual - baseline;
   if (diff === 0) return actual;
-  return baseline + Math.sign(diff) * Math.max(Math.abs(diff), MIN_DETAIL_DELTA);
+
+  const magnitude = Math.max(Math.abs(diff), MIN_DETAIL_DELTA);
+  const candidate = baseline + Math.sign(diff) * magnitude;
+  if (candidate >= MIN_RENDER_SIZE) return candidate;
+
+  return baseline + magnitude;
 }
 
 type Seg = [number, number];
