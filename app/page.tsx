@@ -1,5 +1,15 @@
 import Image from "next/image";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -38,31 +48,48 @@ export default function Home() {
             center.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>shadcn preset 미리보기</CardTitle>
+            <CardDescription>
+              bdxlGgbce preset (nova / neutral / Raleway)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            <Button variant="default">Default</Button>
+            <Button variant="outline">Outline</Button>
+            <Button variant="secondary">Secondary</Button>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              className="w-full sm:w-auto"
+              nativeButton={false}
+              render={
+                <a
+                  href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              Deploy Now
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto"
+              nativeButton={false}
+              render={
+                <a
+                  href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+            >
+              Documentation
+            </Button>
+          </CardFooter>
+        </Card>
       </main>
     </div>
   );
