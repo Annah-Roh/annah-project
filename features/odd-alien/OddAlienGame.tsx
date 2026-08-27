@@ -71,9 +71,8 @@ export function OddAlienGame() {
       <header className="flex flex-col items-center gap-2 text-center">
         {status === "over" && round ? (
           <>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              최종 도달 ROUND {round.roundNumber}
-            </h1>
+            <h1 className="text-2xl font-semibold tracking-tight">GAME OVER</h1>
+            <p className="text-sm font-medium">최종 도달 ROUND {round.roundNumber}</p>
             <p className="text-muted-foreground text-sm">
               {observationCommentFor(round.roundNumber)}
             </p>
@@ -132,7 +131,7 @@ export function OddAlienGame() {
 
       {round && status === "wrong" && (
         <p aria-live="polite" className="text-sm font-medium text-emerald-700">
-          아쉽네요! 정답은 이 녀석이에요.
+          아쉽네요. 정답은 이 녀석!
         </p>
       )}
 

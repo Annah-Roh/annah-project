@@ -57,12 +57,12 @@ test("오답을 누르면 정답을 잠깐 보여준 뒤 결과 화면으로 넘
   await aliens(page).nth(wrongIndex).click();
 
   // 오답 직후에는 격자에 정답 위치가 잠깐 강조된다.
-  await expect(page.getByText("아쉽네요! 정답은 이 녀석이에요.")).toBeVisible();
+  await expect(page.getByText("아쉽네요. 정답은 이 녀석!")).toBeVisible();
   await expect(aliens(page).nth(oddIndex)).toHaveClass(/ring-emerald-500/);
   await expect(aliens(page).first()).toBeDisabled();
 
   // 잠시 후 격자는 사라지고 결과 화면으로 넘어간다.
-  await expect(page.getByText("최종 도달 ROUND 1")).toBeVisible();
+  await expect(page.getByText("GAME OVER")).toBeVisible();
   await expect(aliens(page)).toHaveCount(0);
 });
 
@@ -77,11 +77,11 @@ test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간�
 
   const wrongIndex = (await findOddIndex(page)) === 0 ? 1 : 0;
   await aliens(page).nth(wrongIndex).click();
-  await expect(page.getByText("최종 도달 ROUND 3")).toBeVisible();
+  await expect(page.getByText("GAME OVER")).toBeVisible();
 
   await page.getByRole("button", { name: "RESTART" }).click();
 
   await expect(page.getByText("ROUND 1")).toBeVisible();
-  await expect(page.getByText(/최종 도달 ROUND/)).toHaveCount(0);
+  await expect(page.getByText("GAME OVER")).toHaveCount(0);
   expect(await aliens(page).count()).toBe(4);
 });
