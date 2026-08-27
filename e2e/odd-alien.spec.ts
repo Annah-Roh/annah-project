@@ -79,7 +79,7 @@ test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간�
   await aliens(page).nth(wrongIndex).click();
   await expect(page.getByText("최종 도달 ROUND 3")).toBeVisible();
 
-  await page.getByRole("button", { name: "다시 시작" }).click();
+  await page.getByRole("button", { name: "RESTART" }).click();
 
   await expect(page.getByText("ROUND 1")).toBeVisible();
   await expect(page.getByText(/최종 도달 ROUND/)).toHaveCount(0);

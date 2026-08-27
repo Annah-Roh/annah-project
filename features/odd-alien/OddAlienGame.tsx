@@ -144,7 +144,7 @@ export function OddAlienGame() {
 
       {status === "over" && round && (
         <section role="status" className="flex flex-col items-center gap-3 text-center">
-          <Button onClick={() => start(1)}>다시 시작</Button>
+          <Button onClick={() => start(1)}>RESTART</Button>
         </section>
       )}
     </main>
