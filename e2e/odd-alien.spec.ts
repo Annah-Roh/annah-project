@@ -27,7 +27,7 @@ async function findOddIndex(page: import("@playwright/test").Page) {
 test("접속하면 시작 버튼 없이 1라운드가 바로 보인다", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByText("라운드 1")).toBeVisible();
+  await expect(page.getByText("ROUND 1")).toBeVisible();
   await expect(aliens(page).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "다시 시작" })).toHaveCount(0);
 });
@@ -38,7 +38,7 @@ test("정답을 누르면 다음 라운드로 넘어가고 외계인이 늘어�
   const firstCount = await aliens(page).count();
   await aliens(page).nth(await findOddIndex(page)).click();
 
-  await expect(page.getByText("라운드 2")).toBeVisible();
+  await expect(page.getByText("ROUND 2")).toBeVisible();
   expect(await aliens(page).count()).toBeGreaterThan(firstCount);
 });
 
@@ -60,7 +60,7 @@ test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간�
 
   for (const nextRound of [2, 3]) {
     await aliens(page).nth(await findOddIndex(page)).click();
-    await expect(page.getByText(`라운드 ${nextRound}`)).toBeVisible();
+    await expect(page.getByText(`ROUND ${nextRound}`)).toBeVisible();
   }
 
   const wrongIndex = (await findOddIndex(page)) === 0 ? 1 : 0;
@@ -69,7 +69,7 @@ test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간�
 
   await page.getByRole("button", { name: "다시 시작" }).click();
 
-  await expect(page.getByText("라운드 1")).toBeVisible();
+  await expect(page.getByText("ROUND 1")).toBeVisible();
   await expect(page.getByText(/도달 라운드/)).toHaveCount(0);
   expect(await aliens(page).count()).toBe(4);
 });
