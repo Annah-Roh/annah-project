@@ -14,3 +14,6 @@
 - `features/odd-alien/round.ts`의 `SPECIES_COUNT`와 `Alien.tsx`의 `SPECIES` 배열
   길이가 각자 다른 파일의 매직 넘버로 중복돼 있다. 한쪽만 바꾸면 새 종이 뽑히지
   않거나 랜덤 값 일부가 낭비되는데, 컴파일 타임에 잡히지 않는다.
+- `features/odd-alien/OddAlienGame.tsx`의 제한 시간 타이머 effect는 effect 본문에서
+  바로 `setProgress(1)`을 호출해 `react-hooks/set-state-in-effect` eslint 규칙을
+  위반한다(`npx eslint`에서 error). 화면 동작에는 지장이 없다.
