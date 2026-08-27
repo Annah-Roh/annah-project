@@ -11,6 +11,22 @@ const MAX_LEG_LENGTH = 3;
 /** 다리 수의 하한·상한. 너무 많아지면 지저분해 보여서 범위를 좁게 둔다. */
 const MIN_LEGS = 0;
 const MAX_LEGS = 4;
+/** eyeSize 편차를 동공 크기에 적용할 때의 증폭 배수. 동공은 흰자보다 작아서 그대로 적용하면 티가 안 난다. */
+const PUPIL_AMPLIFY = 1.6;
+/**
+ * 세부 요소 하나가 "차이 나는 값"으로 뽑혔을 때, 뷰박스 기준으로 보장하는 최소 크기 차이(칸).
+ * 종의 배율(eyeScale 등)이나 라운드의 편차 비율이 아무리 작아도 이 값 밑으로는 떨어지지 않는다.
+ * round.ts의 편차 비율만으로는 종·요소 조합마다 최악의 경우를 다 계산해야 해서, 렌더링 단계에서
+ * 절대값으로 한 번 더 못박는다.
+ */
+const MIN_DETAIL_DELTA = 3.5;
+
+/** actual이 baseline과 다르면(=이 요소가 이번 라운드의 차이점이면) 최소 MIN_DETAIL_DELTA만큼은 벌어지게 한다. */
+function withMinDelta(baseline: number, actual: number): number {
+  const diff = actual - baseline;
+  if (diff === 0) return actual;
+  return baseline + Math.sign(diff) * Math.max(Math.abs(diff), MIN_DETAIL_DELTA);
+}
 
 type Seg = [number, number];
 type RowSeg = { row: number; segments: Seg[] };
@@ -385,11 +401,14 @@ export function Alien({
   const spot = `oklch(0.62 0.16 ${hue})`;
   const highlight = `oklch(0.88 0.09 ${hue})`;
 
-  const eyeW = 12 * eyeSize * shape.eyeScale;
-  const eyeH = 16 * eyeSize * shape.eyeScale;
-  const pupil = 6 * eyeSize * shape.eyeScale;
-  const mouthW = 18 * mouthWidth;
-  const spotSide = 8 * spotSize;
+  const eyeW = withMinDelta(12 * shape.eyeScale, 12 * eyeSize * shape.eyeScale);
+  const eyeH = withMinDelta(16 * shape.eyeScale, 16 * eyeSize * shape.eyeScale);
+  // 동공은 흰자보다 크기가 작아서 같은 비율로만 키우면 차이가 잘 안 보인다.
+  // eyeSize가 벗어난 만큼을 증폭해서 동공 쪽 변화가 더 도드라지게 하되, 0 밑으로는 내려가지 않게 막는다.
+  const pupilScale = Math.max(0.2, 1 + (eyeSize - 1) * PUPIL_AMPLIFY);
+  const pupil = withMinDelta(6 * shape.eyeScale, 6 * pupilScale * shape.eyeScale);
+  const mouthW = withMinDelta(18, 18 * mouthWidth);
+  const spotSide = withMinDelta(8, 8 * spotSize);
   const legCount = Math.min(MAX_LEGS, Math.max(MIN_LEGS, shape.legCount + legCountDelta));
   const armRows = armRowsFor(shape.armRows, armCountDelta);
 
