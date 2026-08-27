@@ -93,7 +93,7 @@ export function OddAlienGame() {
                 : "",
             ].join(" ")}
           >
-            <Alien appearance={appearance} />
+            <Alien appearance={appearance} species={round.species} />
           </button>
         ))}
       </div>
