@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "다른 외계인 찾기",
-  description: "여러 외계인 중 딱 하나 다른 외계인을 찾는 관찰력 게임",
+  title: "WHO'S DIFFERENT?",
+  description: "누가 봐도 똑같죠? …정말 그럴까요? 👽",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
