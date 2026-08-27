@@ -12,7 +12,7 @@ type Status = "playing" | "correct" | "wrong" | "over";
 const SUCCESS_PAUSE_MS = 420;
 
 /** 오답을 눌렀을 때 정답 위치를 보여준 뒤 결과 화면으로 넘어가기까지의 시간. */
-const REVEAL_PAUSE_MS = 900;
+const REVEAL_PAUSE_MS = 2000;
 
 /** 도달 라운드에 따라 다르게 보여줄 관찰력 평가 문구. 낮은 기준부터 확인한다. */
 const OBSERVATION_TIERS: { minRound: number; comment: string }[] = [
