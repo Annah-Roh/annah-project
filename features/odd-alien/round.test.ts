@@ -32,13 +32,13 @@ describe("alienCountFor", () => {
 });
 
 describe("differenceModeFor", () => {
-  it("7라운드까지는 색상으로 구별한다", () => {
+  it("5라운드까지는 색상으로 구별한다", () => {
     expect(differenceModeFor(1)).toBe("color");
-    expect(differenceModeFor(7)).toBe("color");
+    expect(differenceModeFor(5)).toBe("color");
   });
 
-  it("8라운드부터는 세부 요소로 구별한다", () => {
-    expect(differenceModeFor(8)).toBe("detail");
+  it("6라운드부터는 세부 요소로 구별한다", () => {
+    expect(differenceModeFor(6)).toBe("detail");
     expect(differenceModeFor(20)).toBe("detail");
   });
 });
