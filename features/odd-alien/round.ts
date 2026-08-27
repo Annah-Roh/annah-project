@@ -21,7 +21,12 @@ export type Round = {
   aliens: AlienAppearance[];
   oddIndex: number;
   mode: DifferenceMode;
+  /** 이 라운드에 등장하는 외계인 종(모양). 라운드 안에서는 모두 같은 종을 쓴다. */
+  species: number;
 };
+
+/** 준비된 외계인 종(모양) 수. 실제 모양 정의는 렌더링 쪽(Alien.tsx)이 갖는다. */
+export const SPECIES_COUNT = 9;
 
 /**
  * 라운드별 외계인 수. 줄지 않고, 마지막 값이 상한이다.
@@ -100,6 +105,7 @@ export function createRound(roundNumber: number, random: Random = Math.random): 
     aliens,
     oddIndex,
     mode,
+    species: Math.floor(random() * SPECIES_COUNT),
   };
 }
 
