@@ -1,3 +1,4 @@
+import { BODY_CHROMA, BODY_LIGHTNESS } from "@/features/odd-alien/color";
 import type { AlienAppearance } from "@/features/odd-alien/round";
 
 /** 픽셀 격자 한 칸의 크기(단위). 20칸 x 20칸 = 100x100 뷰박스. */
@@ -396,7 +397,7 @@ export function Alien({
   const { hue, eyeSize, mouthWidth, spotSize, legCountDelta, armCountDelta } = appearance;
   const shape = SPECIES[((species % SPECIES.length) + SPECIES.length) % SPECIES.length];
 
-  const body = `oklch(0.74 0.16 ${hue})`;
+  const body = `oklch(${BODY_LIGHTNESS} ${BODY_CHROMA} ${hue})`;
   const shade = `oklch(0.5 0.15 ${hue})`;
   const spot = `oklch(0.62 0.16 ${hue})`;
   const highlight = `oklch(0.88 0.09 ${hue})`;

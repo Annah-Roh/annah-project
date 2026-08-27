@@ -2,6 +2,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 
+import { bodyColorDistance } from "@/features/odd-alien/color";
 import {
   alienCountFor,
   createRound,
@@ -85,6 +86,21 @@ describe("createRound", () => {
 
     expect(odd.hue).not.toBe(other.hue);
     expect({ ...odd, hue: 0 }).toEqual({ ...other, hue: 0 });
+  });
+
+  it("색상 차이가 청록색 근방처럼 sRGB 표현 범위를 벗어나 잘리는 색조에서도 화면상 구별된다", () => {
+    // oklch는 색조를 같은 각도만큼 돌려도 특정 색조대에서는 sRGB로 변환되며 채도가
+    // 잘려 실제 RGB 차이가 확 줄어든다. 시작 색조를 촘촘히 훑어도 항상 일정 거리
+    // 이상 벌어지는지 확인한다.
+    for (let hue = 0; hue < 360; hue += 3) {
+      for (const directionPick of [0.1, 0.9]) {
+        const round = createRound(2, sequence([hue / 360, directionPick, 0.1]));
+        const odd = round.aliens[round.oddIndex];
+        const other = round.aliens.find((_, i) => i !== round.oddIndex)!;
+
+        expect(bodyColorDistance(odd.hue, other.hue)).toBeGreaterThanOrEqual(40);
+      }
+    }
   });
 
   it("세부 요소 라운드에서는 색조가 같고 세부 요소 하나만 다르다", () => {

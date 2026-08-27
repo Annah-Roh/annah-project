@@ -1,3 +1,5 @@
+import { bodyColorDistance } from "@/features/odd-alien/color";
+
 /**
  * 라운드 생성 규칙. 난이도 계단(외계인 수 증가 + 차이 축소)이 여기에 모인다.
  */
@@ -71,6 +73,17 @@ const LEG_DELTA_BASE = 4;
 /** 팔은 쌍 단위라 항상 1쌍 차이로 고정한다. */
 const ARM_DELTA_BASE = 1;
 
+/**
+ * 색상 차이가 화면에서 실제로 보장해야 하는 최소 RGB 거리(0–441 스케일).
+ * oklch는 색조를 같은 각도만큼 돌려도 채도가 sRGB 표현 범위를 벗어나 잘리는 구간(주로
+ * 청록색 근방)에서는 실제 RGB 차이가 확 줄어든다. hueShiftFor가 정한 각도로는 부족할 때만
+ * applyHueShift가 각도를 늘려서 이 값을 채운다.
+ */
+const MIN_COLOR_DISTANCE = 45;
+/** 위 최소값을 채우기 위해 각도를 늘리는 단위(도)와 그 상한. */
+const HUE_SEARCH_STEP = 2;
+const MAX_HUE_SHIFT = 175;
+
 export type Random = () => number;
 
 export function alienCountFor(roundNumber: number): number {
@@ -137,7 +150,16 @@ function applyHueShift(
   random: Random
 ): AlienAppearance {
   const direction = random() < 0.5 ? -1 : 1;
-  return { ...base, hue: (base.hue + direction * shift + 360) % 360 };
+
+  let magnitude = shift;
+  while (
+    magnitude < MAX_HUE_SHIFT &&
+    bodyColorDistance(base.hue, base.hue + direction * magnitude) < MIN_COLOR_DISTANCE
+  ) {
+    magnitude += HUE_SEARCH_STEP;
+  }
+
+  return { ...base, hue: (base.hue + direction * magnitude + 360) % 360 };
 }
 
 function applyDetailDeviation(
