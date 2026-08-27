@@ -24,16 +24,22 @@ async function findOddIndex(page: import("@playwright/test").Page) {
   return oddIndex;
 }
 
-test("접속하면 시작 버튼 없이 1라운드가 바로 보인다", async ({ page }) => {
+test("접속하면 제목과 시작 버튼만 보이고, 시작을 누르면 1라운드가 시작된다", async ({ page }) => {
   await page.goto("/");
+
+  await expect(page.getByText("WHO'S DIFFERENT?")).toBeVisible();
+  await expect(page.getByText("ROUND 1")).toHaveCount(0);
+  await expect(aliens(page)).toHaveCount(0);
+
+  await page.getByRole("button", { name: "시작", exact: true }).click();
 
   await expect(page.getByText("ROUND 1")).toBeVisible();
   await expect(aliens(page).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "다시 시작" })).toHaveCount(0);
 });
 
 test("정답을 누르면 다음 라운드로 넘어가고 외계인이 늘어난다", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "시작", exact: true }).click();
 
   const firstCount = await aliens(page).count();
   await aliens(page).nth(await findOddIndex(page)).click();
@@ -44,6 +50,7 @@ test("정답을 누르면 다음 라운드로 넘어가고 외계인이 늘어�
 
 test("오답을 누르면 게임이 끝나고 정답과 도달 라운드가 보인다", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "시작", exact: true }).click();
 
   const oddIndex = await findOddIndex(page);
   const wrongIndex = oddIndex === 0 ? 1 : 0;
@@ -57,6 +64,7 @@ test("오답을 누르면 게임이 끝나고 정답과 도달 라운드가 보�
 
 test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간다", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "시작", exact: true }).click();
 
   for (const nextRound of [2, 3]) {
     await aliens(page).nth(await findOddIndex(page)).click();

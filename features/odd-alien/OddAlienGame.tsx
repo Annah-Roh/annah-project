@@ -22,14 +22,8 @@ export function OddAlienGame() {
     setStatus("playing");
   }, []);
 
-  // 라운드는 마운트한 뒤에 만든다. 서버와 hydration 렌더는 모두 빈 격자를 그리고,
-  // 무작위 배치는 그 뒤에 채워야 서버·클라이언트가 어긋나지 않는다.
-  // 클라이언트 전용 초기화라 한 번만 실행되며, 연쇄 렌더로 이어지지 않는다.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    start(1);
-  }, [start]);
-
+  // 라운드는 시작 버튼을 눌렀을 때 처음 만든다. round가 null인 동안은
+  // 서버·클라이언트 모두 같은 시작 화면을 그리므로 hydration이 어긋나지 않는다.
   // 성공 표시를 잠깐 보여준 다음 다음 라운드로 넘어간다.
   useEffect(() => {
     if (status !== "correct" || !round) return;
@@ -57,46 +51,52 @@ export function OddAlienGame() {
         <p className="text-muted-foreground text-sm">
           누가 봐도 똑같죠? …정말 그럴까요? 👽
         </p>
-        <p aria-live="polite" className="text-lg font-medium">
-          ROUND {round?.roundNumber ?? 1}
-        </p>
+        {round && (
+          <p aria-live="polite" className="text-lg font-medium">
+            ROUND {round.roundNumber}
+          </p>
+        )}
       </header>
 
-      <div
-        className="grid w-full shrink-0 gap-2"
-        style={{
-          gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-          // 초반 라운드에서 외계인이 화면을 다 채우지 않도록 폭을 열 수에 맞추고,
-          // 마지막 라운드에서도 격자와 결과가 스크롤 없이 함께 보이도록 세로 여유로 한 번 더 제한한다.
-          maxWidth: `min(88vw, ${columns * 7}rem, 34rem, calc((100vh - 21rem) * ${columns / rows}))`,
-        }}
-      >
-        {round?.aliens.map((appearance, index) => (
-          <button
-            key={index}
-            type="button"
-            aria-label={`외계인 ${index + 1}`}
-            disabled={status !== "playing"}
-            onClick={() => handlePick(index)}
-            className={[
-              "aspect-square rounded-xl p-[6%] transition",
-              "outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              status === "playing" ? "hover:bg-accent cursor-pointer" : "",
-              status === "correct" && index === pickedIndex
-                ? "bg-emerald-500/15 ring-2 ring-emerald-500"
-                : "",
-              status === "over" && index === pickedIndex
-                ? "bg-destructive/15 ring-2 ring-destructive"
-                : "",
-              status === "over" && index === round.oddIndex
-                ? "bg-emerald-500/15 ring-2 ring-emerald-500"
-                : "",
-            ].join(" ")}
-          >
-            <Alien appearance={appearance} species={round.species} />
-          </button>
-        ))}
-      </div>
+      {!round && <Button onClick={() => start(1)}>시작</Button>}
+
+      {round && (
+        <div
+          className="grid w-full shrink-0 gap-2"
+          style={{
+            gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+            // 초반 라운드에서 외계인이 화면을 다 채우지 않도록 폭을 열 수에 맞추고,
+            // 마지막 라운드에서도 격자와 결과가 스크롤 없이 함께 보이도록 세로 여유로 한 번 더 제한한다.
+            maxWidth: `min(88vw, ${columns * 7}rem, 34rem, calc((100vh - 21rem) * ${columns / rows}))`,
+          }}
+        >
+          {round.aliens.map((appearance, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`외계인 ${index + 1}`}
+              disabled={status !== "playing"}
+              onClick={() => handlePick(index)}
+              className={[
+                "aspect-square rounded-xl p-[6%] transition",
+                "outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                status === "playing" ? "hover:bg-accent cursor-pointer" : "",
+                status === "correct" && index === pickedIndex
+                  ? "bg-emerald-500/15 ring-2 ring-emerald-500"
+                  : "",
+                status === "over" && index === pickedIndex
+                  ? "bg-destructive/15 ring-2 ring-destructive"
+                  : "",
+                status === "over" && index === round.oddIndex
+                  ? "bg-emerald-500/15 ring-2 ring-emerald-500"
+                  : "",
+              ].join(" ")}
+            >
+              <Alien appearance={appearance} species={round.species} />
+            </button>
+          ))}
+        </div>
+      )}
 
       {status === "over" && round && (
         <section
