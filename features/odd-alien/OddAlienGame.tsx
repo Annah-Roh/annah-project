@@ -51,14 +51,9 @@ export function OddAlienGame() {
         <p className="text-muted-foreground text-sm">
           누가 봐도 똑같죠? …정말 그럴까요? 👽
         </p>
-        {round && (
-          <p aria-live="polite" className="text-lg font-medium">
-            ROUND {round.roundNumber}
-          </p>
-        )}
       </header>
 
-      {!round && <Button onClick={() => start(1)}>시작</Button>}
+      {!round && <Button onClick={() => start(1)}>START</Button>}
 
       {round && (
         <div
@@ -98,13 +93,19 @@ export function OddAlienGame() {
         </div>
       )}
 
+      {round && status !== "over" && (
+        <p aria-live="polite" className="text-lg font-medium">
+          ROUND {round.roundNumber}
+        </p>
+      )}
+
       {status === "over" && round && (
         <section
           role="status"
           className="flex flex-col items-center gap-3 text-center"
         >
           <p className="text-muted-foreground text-sm">
-            초록색 테두리가 정답이었습니다.
+            아쉽네요! 정답은 이 녀석이에요.
           </p>
           <p className="text-xl font-semibold">
             도달 라운드 {round.roundNumber}

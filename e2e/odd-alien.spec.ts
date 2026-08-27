@@ -31,7 +31,7 @@ test("접속하면 제목과 시작 버튼만 보이고, 시작을 누르면 1�
   await expect(page.getByText("ROUND 1")).toHaveCount(0);
   await expect(aliens(page)).toHaveCount(0);
 
-  await page.getByRole("button", { name: "시작", exact: true }).click();
+  await page.getByRole("button", { name: "START", exact: true }).click();
 
   await expect(page.getByText("ROUND 1")).toBeVisible();
   await expect(aliens(page).first()).toBeVisible();
@@ -39,7 +39,7 @@ test("접속하면 제목과 시작 버튼만 보이고, 시작을 누르면 1�
 
 test("정답을 누르면 다음 라운드로 넘어가고 외계인이 늘어난다", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "시작", exact: true }).click();
+  await page.getByRole("button", { name: "START", exact: true }).click();
 
   const firstCount = await aliens(page).count();
   await aliens(page).nth(await findOddIndex(page)).click();
@@ -50,21 +50,21 @@ test("정답을 누르면 다음 라운드로 넘어가고 외계인이 늘어�
 
 test("오답을 누르면 게임이 끝나고 정답과 도달 라운드가 보인다", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "시작", exact: true }).click();
+  await page.getByRole("button", { name: "START", exact: true }).click();
 
   const oddIndex = await findOddIndex(page);
   const wrongIndex = oddIndex === 0 ? 1 : 0;
   await aliens(page).nth(wrongIndex).click();
 
   await expect(page.getByText("도달 라운드 1")).toBeVisible();
-  await expect(page.getByText("초록색 테두리가 정답이었습니다.")).toBeVisible();
+  await expect(page.getByText("아쉽네요! 정답은 이 녀석이에요.")).toBeVisible();
   await expect(aliens(page).nth(oddIndex)).toHaveClass(/ring-emerald-500/);
   await expect(aliens(page).first()).toBeDisabled();
 });
 
 test("여러 라운드를 통과한 뒤 재시작하면 1라운드로 돌아간다", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "시작", exact: true }).click();
+  await page.getByRole("button", { name: "START", exact: true }).click();
 
   for (const nextRound of [2, 3]) {
     await aliens(page).nth(await findOddIndex(page)).click();
