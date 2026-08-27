@@ -97,7 +97,7 @@ export function OddAlienGame() {
       <header className="flex flex-col items-center gap-2 text-center">
         {status === "over" && round ? (
           <>
-            <h1 className="text-2xl font-semibold tracking-tight">GAME OVER</h1>
+            <h1 className="text-2xl font-semibold tracking-tight text-red-800">GAME OVER</h1>
             <p className="text-sm font-medium">최종 도달 ROUND {round.roundNumber}</p>
             <p className="text-muted-foreground text-sm">
               {observationCommentFor(round.roundNumber)}
