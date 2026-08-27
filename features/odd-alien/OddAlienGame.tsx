@@ -60,11 +60,11 @@ export function OddAlienGame() {
     return () => clearTimeout(timer);
   }, [status]);
 
-  // 라운드가 올라갈수록 짧아지는 제한 시간 동안 진행 바를 줄이고, 다 되면 시간 초과를 오답과 같이 처리한다.
+  // 고정된 제한 시간 동안 진행 바를 줄이고, 다 되면 시간 초과를 오답과 같이 처리한다.
   useEffect(() => {
     if (status !== "playing" || !round) return;
 
-    const limit = timeLimitFor(round.roundNumber);
+    const limit = timeLimitFor();
     const startedAt = Date.now();
     setProgress(1);
 
