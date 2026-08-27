@@ -66,29 +66,35 @@ export function OddAlienGame() {
           }}
         >
           {round.aliens.map((appearance, index) => (
-            <button
-              key={index}
-              type="button"
-              aria-label={`외계인 ${index + 1}`}
-              disabled={status !== "playing"}
-              onClick={() => handlePick(index)}
-              className={[
-                "aspect-square rounded-xl p-[6%] transition",
-                "outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                status === "playing" ? "hover:bg-accent cursor-pointer" : "",
-                status === "correct" && index === pickedIndex
-                  ? "bg-emerald-500/15 ring-2 ring-emerald-500"
-                  : "",
-                status === "over" && index === pickedIndex
-                  ? "bg-destructive/15 ring-2 ring-destructive"
-                  : "",
-                status === "over" && index === round.oddIndex
-                  ? "bg-emerald-500/15 ring-2 ring-emerald-500"
-                  : "",
-              ].join(" ")}
-            >
-              <Alien appearance={appearance} species={round.species} />
-            </button>
+            <div key={index} className="relative">
+              <button
+                type="button"
+                aria-label={`외계인 ${index + 1}`}
+                disabled={status !== "playing"}
+                onClick={() => handlePick(index)}
+                className={[
+                  "aspect-square w-full rounded-xl p-[6%] transition",
+                  "outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  status === "playing" ? "hover:bg-accent cursor-pointer" : "",
+                  status === "correct" && index === pickedIndex
+                    ? "bg-emerald-500/15 ring-2 ring-emerald-500"
+                    : "",
+                  status === "over" && index === pickedIndex
+                    ? "bg-destructive/15 ring-2 ring-destructive"
+                    : "",
+                  status === "over" && index === round.oddIndex
+                    ? "bg-emerald-500/15 ring-2 ring-emerald-500"
+                    : "",
+                ].join(" ")}
+              >
+                <Alien appearance={appearance} species={round.species} />
+              </button>
+              {status === "over" && index === round.oddIndex && (
+                <p className="absolute top-full left-1/2 mt-1 w-max -translate-x-1/2 text-center text-xs whitespace-nowrap text-emerald-700">
+                  아쉽네요! 정답은 이 녀석이에요.
+                </p>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -104,9 +110,6 @@ export function OddAlienGame() {
           role="status"
           className="flex flex-col items-center gap-3 text-center"
         >
-          <p className="text-muted-foreground text-sm">
-            아쉽네요! 정답은 이 녀석이에요.
-          </p>
           <p className="text-xl font-semibold">
             도달 라운드 {round.roundNumber}
           </p>
