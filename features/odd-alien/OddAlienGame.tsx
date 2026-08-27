@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Alien } from "@/features/odd-alien/Alien";
-import { createRound, type Round } from "@/features/odd-alien/round";
+import { createRound, timeLimitFor, type Round } from "@/features/odd-alien/round";
 
 type Status = "playing" | "correct" | "wrong" | "over";
 
@@ -13,6 +13,9 @@ const SUCCESS_PAUSE_MS = 420;
 
 /** 오답을 눌렀을 때 정답 위치를 보여준 뒤 결과 화면으로 넘어가기까지의 시간. */
 const REVEAL_PAUSE_MS = 2000;
+
+/** 제한 시간 진행 바를 갱신하는 주기. */
+const TIME_BAR_TICK_MS = 50;
 
 /** 도달 라운드에 따라 다르게 보여줄 관찰력 평가 문구. 낮은 기준부터 확인한다. */
 const OBSERVATION_TIERS: { minRound: number; comment: string }[] = [
@@ -31,6 +34,7 @@ export function OddAlienGame() {
   const [round, setRound] = useState<Round | null>(null);
   const [status, setStatus] = useState<Status>("playing");
   const [pickedIndex, setPickedIndex] = useState<number | null>(null);
+  const [progress, setProgress] = useState(1);
 
   const start = useCallback((roundNumber: number) => {
     setRound(createRound(roundNumber));
@@ -55,6 +59,28 @@ export function OddAlienGame() {
     const timer = setTimeout(() => setStatus("over"), REVEAL_PAUSE_MS);
     return () => clearTimeout(timer);
   }, [status]);
+
+  // 라운드가 올라갈수록 짧아지는 제한 시간 동안 진행 바를 줄이고, 다 되면 시간 초과를 오답과 같이 처리한다.
+  useEffect(() => {
+    if (status !== "playing" || !round) return;
+
+    const limit = timeLimitFor(round.roundNumber);
+    const startedAt = Date.now();
+    setProgress(1);
+
+    const tick = setInterval(() => {
+      const remaining = 1 - (Date.now() - startedAt) / limit;
+      if (remaining <= 0) {
+        setProgress(0);
+        setPickedIndex(null);
+        setStatus("wrong");
+        return;
+      }
+      setProgress(remaining);
+    }, TIME_BAR_TICK_MS);
+
+    return () => clearInterval(tick);
+  }, [status, round]);
 
   function handlePick(index: number) {
     if (!round || status !== "playing") return;
@@ -126,6 +152,20 @@ export function OddAlienGame() {
               <Alien appearance={appearance} species={round.species} />
             </button>
           ))}
+        </div>
+      )}
+
+      {round && status === "playing" && (
+        <div
+          role="progressbar"
+          aria-label="남은 시간"
+          aria-valuenow={Math.round(progress * 100)}
+          className="h-1.5 w-40 max-w-[70vw] overflow-hidden rounded-full bg-muted"
+        >
+          <div
+            className="h-full rounded-full bg-foreground"
+            style={{ width: `${Math.max(0, progress) * 100}%` }}
+          />
         </div>
       )}
 

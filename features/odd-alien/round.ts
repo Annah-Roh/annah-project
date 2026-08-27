@@ -47,6 +47,11 @@ const DETAIL_DEVIATION_START = 0.55;
 const DETAIL_DEVIATION_STEP = 0.05;
 const DETAIL_DEVIATION_FLOOR = 0.18;
 
+/** 라운드당 제한 시간(ms). 색상·세부 편차와 같은 방식으로 라운드마다 좁아지되 하한 아래로는 내려가지 않는다. */
+const TIME_LIMIT_START_MS = 8000;
+const TIME_LIMIT_STEP_MS = 300;
+const TIME_LIMIT_FLOOR_MS = 3000;
+
 const DETAIL_KEYS = [
   "eyeSize",
   "antennaLength",
@@ -75,6 +80,11 @@ export function detailDeviationFor(roundNumber: number): number {
     DETAIL_DEVIATION_START -
     (roundNumber - DETAIL_MODE_FROM_ROUND) * DETAIL_DEVIATION_STEP;
   return Math.max(DETAIL_DEVIATION_FLOOR, shrunk);
+}
+
+export function timeLimitFor(roundNumber: number): number {
+  const shrunk = TIME_LIMIT_START_MS - (roundNumber - 1) * TIME_LIMIT_STEP_MS;
+  return Math.max(TIME_LIMIT_FLOOR_MS, shrunk);
 }
 
 export function createRound(roundNumber: number, random: Random = Math.random): Round {
