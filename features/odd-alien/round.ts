@@ -48,10 +48,14 @@ const HUE_SHIFT_START = 60;
 const HUE_SHIFT_STEP = 8;
 const HUE_SHIFT_FLOOR = 12;
 
-/** 세부 요소 배율 편차. 색상과 같은 방식으로 좁아진다. */
+/**
+ * 세부 요소 배율 편차. 색상과 같은 방식으로 좁아진다.
+ * 하한은 눈이 가장 작은 종(eyeScale 0.55)이 뽑혀도 실제 픽셀 차이가 남도록 잡은 값이다.
+ * 더 낮추면 그 종에서 eyeSize가 정답 기준으로 뽑혔을 때 화면상 거의 구별되지 않는다.
+ */
 const DETAIL_DEVIATION_START = 0.55;
 const DETAIL_DEVIATION_STEP = 0.05;
-const DETAIL_DEVIATION_FLOOR = 0.18;
+const DETAIL_DEVIATION_FLOOR = 0.3;
 
 /** 라운드당 제한 시간(ms). 라운드가 올라가도 줄어들지 않고 항상 동일하다. */
 const TIME_LIMIT_MS = 8000;
