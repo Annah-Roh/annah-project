@@ -94,7 +94,7 @@ describe("createRound", () => {
 
     expect(odd.hue).toBe(other.hue);
 
-    const changed = (["eyeSize", "antennaLength", "mouthWidth", "spotSize"] as const)
+    const changed = (["eyeSize", "mouthWidth", "spotSize", "legCountDelta", "armCountDelta"] as const)
       .filter((key) => odd[key] !== other[key]);
     expect(changed).toHaveLength(1);
   });

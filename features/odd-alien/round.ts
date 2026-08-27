@@ -2,14 +2,17 @@
  * 라운드 생성 규칙. 난이도 계단(외계인 수 증가 + 차이 축소)이 여기에 모인다.
  */
 
-/** 외계인 하나의 외형. 세부 값은 기본 형태에 곱하는 배율이다. */
+/** 외계인 하나의 외형. 배율 값은 기본 형태에 곱하고, 델타 값은 종의 기본 개수에 더한다. */
 export type AlienAppearance = {
   /** 몸통 색상의 색조(0–360). */
   hue: number;
   eyeSize: number;
-  antennaLength: number;
   mouthWidth: number;
   spotSize: number;
+  /** 종의 기본 다리 수에 더해지는 값. 0이면 차이 없음. */
+  legCountDelta: number;
+  /** 종의 기본 팔 쌍 수에 더해지는 값. 0이면 차이 없음. */
+  armCountDelta: number;
 };
 
 export type DifferenceMode = "color" | "detail";
@@ -53,12 +56,16 @@ const DETAIL_DEVIATION_FLOOR = 0.18;
 /** 라운드당 제한 시간(ms). 라운드가 올라가도 줄어들지 않고 항상 동일하다. */
 const TIME_LIMIT_MS = 8000;
 
-const DETAIL_KEYS = [
-  "eyeSize",
-  "antennaLength",
-  "mouthWidth",
-  "spotSize",
-] as const;
+/** 배율(곱셈)로 적용되는 세부 요소 키. */
+const SCALE_DETAIL_KEYS = ["eyeSize", "mouthWidth", "spotSize"] as const;
+/** 델타(덧셈)로 적용되는 세부 요소 키. 다리·팔 개수는 이산값이라 배율로 표현할 수 없다. */
+const COUNT_DETAIL_KEYS = ["legCountDelta", "armCountDelta"] as const;
+const DETAIL_KEYS = [...SCALE_DETAIL_KEYS, ...COUNT_DETAIL_KEYS] as const;
+
+/** 편차가 가장 좁아져도 다리 수 차이가 최소 1개는 나도록 하는 기준값. */
+const LEG_DELTA_BASE = 4;
+/** 팔은 쌍 단위라 항상 1쌍 차이로 고정한다. */
+const ARM_DELTA_BASE = 1;
 
 export type Random = () => number;
 
@@ -94,9 +101,10 @@ export function createRound(roundNumber: number, random: Random = Math.random): 
   const base: AlienAppearance = {
     hue: Math.floor(random() * 360),
     eyeSize: 1,
-    antennaLength: 1,
     mouthWidth: 1,
     spotSize: 1,
+    legCountDelta: 0,
+    armCountDelta: 0,
   };
 
   const odd =
@@ -135,5 +143,12 @@ function applyDetailDeviation(
 ): AlienAppearance {
   const key = DETAIL_KEYS[Math.floor(random() * DETAIL_KEYS.length)];
   const direction = random() < 0.5 ? -1 : 1;
+
+  if (key === "legCountDelta") {
+    return { ...base, legCountDelta: direction * Math.max(1, Math.round(LEG_DELTA_BASE * deviation)) };
+  }
+  if (key === "armCountDelta") {
+    return { ...base, armCountDelta: direction * Math.max(1, Math.round(ARM_DELTA_BASE * deviation)) };
+  }
   return { ...base, [key]: base[key] * (1 + direction * deviation) };
 }
