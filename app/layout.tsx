@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Raleway, Noto_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Raleway, Noto_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const notoSansHeading = Noto_Sans({subsets:['latin'],variable:'--font-heading'});
+const jetbrainsMonoHeading = JetBrains_Mono({subsets:['latin'],variable:'--font-heading'});
 
 const raleway = Raleway({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ko"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", raleway.variable, notoSansHeading.variable)}
+      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, raleway.variable, jetbrainsMonoHeading.variable)}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
