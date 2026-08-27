@@ -8,3 +8,9 @@
   `DETAIL_KEYS` 인덱스도 벗어나 외형 값이 NaN이 된다. 기본값 `Math.random`은 1.0을
   반환하지 않으므로 제품 경로에서는 발생하지 않는다.
 - `features/odd-alien/round.ts`의 `Round.mode` 필드는 채워지지만 읽는 곳이 없다.
+- `features/odd-alien/Alien.tsx`의 종 정의에서 `eyeScale`이 큰 종(예: 아기형 1.7)은
+  8라운드 이상 세부 요소 편차(최대 ×1.55)와 겹치면 눈 크기가 몸통·뷰박스 경계를
+  넘어 일부 잘려 보일 수 있다. 정답 판별에는 지장이 없다.
+- `features/odd-alien/round.ts`의 `SPECIES_COUNT`와 `Alien.tsx`의 `SPECIES` 배열
+  길이가 각자 다른 파일의 매직 넘버로 중복돼 있다. 한쪽만 바꾸면 새 종이 뽑히지
+  않거나 랜덤 값 일부가 낭비되는데, 컴파일 타임에 잡히지 않는다.
